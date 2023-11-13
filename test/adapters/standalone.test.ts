@@ -1333,3 +1333,37 @@ describe('standalone adapter', () => {
     close();
   });
 });
+
+test('with enum', async () => {
+  const appRouter = t.router({
+    echo: t.procedure
+      .meta({ openapi: { method: 'GET', path: '/echo' } })
+      .input(
+        z.object({
+          payload: z.enum(['foo', 'bar']),
+        }),
+      )
+      .output(
+        z.object({
+          payload: z.enum(['foo', 'bar']),
+        }),
+      )
+      .query(({ input }) => input),
+  });
+
+  const { url, close } = createHttpServerWithRouter({
+    router: appRouter,
+  });
+
+  const res = await fetch(`${url}/echo?payload=foo`, {
+    method: 'GET',
+  });
+  const body = await res.json();
+
+  expect(res.status).toBe(200);
+  expect(body).toEqual({ payload: 'foo' });
+  expect(createContextMock).toHaveBeenCalledTimes(1);
+  expect(responseMetaMock).toHaveBeenCalledTimes(1);
+  expect(onErrorMock).toHaveBeenCalledTimes(0);
+  close();
+});

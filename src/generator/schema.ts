@@ -78,7 +78,7 @@ export const getParameterObjects = (
         if (zodSupportsCoerce) {
           if (!instanceofZodTypeCoercible(shapeSchema)) {
             throw new TRPCError({
-              message: `Input parser key: "${shapeKey}" must be ZodString, ZodNumber, ZodBoolean, ZodBigInt or ZodDate`,
+              message: `Input parser key: "${shapeKey}" must be ZodString, ZodNumber, ZodBoolean, ZodBigInt, ZodDate, or ZodEnum`,
               code: 'INTERNAL_SERVER_ERROR',
             });
           }
@@ -189,7 +189,7 @@ export const errorResponseObject: OpenAPIV3.ResponseObject = {
 export const getResponsesObject = (
   schema: unknown,
   example: Record<string, any> | undefined,
-  headers: Record<string, OpenAPIV3.HeaderObject | OpenAPIV3.ReferenceObject> | undefined
+  headers: Record<string, OpenAPIV3.HeaderObject | OpenAPIV3.ReferenceObject> | undefined,
 ): OpenAPIV3.ResponsesObject => {
   if (!instanceofZodType(schema)) {
     throw new TRPCError({
